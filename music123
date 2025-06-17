@@ -1,0 +1,145 @@
+import streamlit as st
+import random
+from datetime import datetime
+
+st.set_page_config(page_title="mbti)음악 추천 🎧", page_icon="🎵")
+
+# ----------------- 음악 데이터 (실제 유튜브 링크 포함) -----------------
+music_data = {
+    "애니메이션 곡": [
+        {"title": "紅蓮華 - LiSA", "url": "https://www.youtube.com/watch?v=7aMOurgDB-o", "era": "최신"},
+        {"title": "青空のラプソディ - fhána", "url": "https://www.youtube.com/watch?v=wCBOXuj9S-A", "era": "명곡"},
+        {"title": "夜に駆ける - YOASOBI", "url": "https://www.youtube.com/watch?v=x8VYWazR5mE", "era": "최신"},
+        {"title": "君の知らない物語 - supercell", "url": "https://www.youtube.com/watch?v=6KQ9bR8yNjs", "era": "명곡"},
+        {"title": "Gurenge - LiSA", "url": "https://www.youtube.com/watch?v=CwkzK-F0Y00", "era": "최신"},
+        {"title": "Marigold - Aimyon", "url": "https://www.youtube.com/watch?v=4fSs6B3Ie-s", "era": "최신"},
+        {"title": "Pretender - Official HIGE DANdism", "url": "https://www.youtube.com/watch?v=TQ8WlA2GXbk", "era": "최신"},
+    ],
+    "옛날 명곡": [
+        {"title": "Bohemian Rhapsody - Queen", "url": "https://www.youtube.com/watch?v=fJ9rUzIMcZQ", "era": "명곡"},
+        {"title": "Let It Be - The Beatles", "url": "https://www.youtube.com/watch?v=QDYfEBY9NM4", "era": "명곡"},
+        {"title": "Your Song - Elton John", "url": "https://www.youtube.com/watch?v=GlPlfCy1urI", "era": "명곡"},
+        {"title": "Billie Jean - Michael Jackson", "url": "https://www.youtube.com/watch?v=Zi_XLOBDo_Y", "era": "명곡"},
+        {"title": "Hotel California - Eagles", "url": "https://www.youtube.com/watch?v=EqPtz5qN7HM", "era": "명곡"},
+        {"title": "Stay With Me - Sam Smith", "url": "https://www.youtube.com/watch?v=pB-5XG-DbAA", "era": "최신"},
+        {"title": "Someone Like You - Adele", "url": "https://www.youtube.com/watch?v=hLQl3WQQoQ0", "era": "최신"},
+    ],
+    "팝송": [
+        {"title": "Shape of You - Ed Sheeran", "url": "https://www.youtube.com/watch?v=JGwWNGJdvx8", "era": "최신"},
+        {"title": "Levitating - Dua Lipa", "url": "https://www.youtube.com/watch?v=TUVcZfQe-Kw", "era": "최신"},
+        {"title": "Blinding Lights - The Weeknd", "url": "https://www.youtube.com/watch?v=4NRXx6U8ABQ", "era": "최신"},
+        {"title": "Shake It Off - Taylor Swift", "url": "https://www.youtube.com/watch?v=nfWlot6h_JM", "era": "최신"},
+        {"title": "Uptown Funk - Bruno Mars", "url": "https://www.youtube.com/watch?v=OPf0YbXqDm0", "era": "명곡"},
+        {"title": "When I Was Your Man - Bruno Mars", "url": "https://www.youtube.com/watch?v=ekzHIouo8Q4", "era": "명곡"},
+        {"title": "Photograph - Ed Sheeran", "url": "https://www.youtube.com/watch?v=SPKBtZHuzKY", "era": "명곡"},
+    ],
+    "K-POP": [
+        {"title": "Dynamite - BTS", "url": "https://www.youtube.com/watch?v=gdZLi9oWNZg", "era": "최신"},
+        {"title": "How You Like That - BLACKPINK", "url": "https://www.youtube.com/watch?v=ioNng23DkIM", "era": "최신"},
+        {"title": "Cheer Up - TWICE", "url": "https://www.youtube.com/watch?v=c7rCyll5AeY", "era": "명곡"},
+        {"title": "Celebrity - IU", "url": "https://www.youtube.com/watch?v=hwZNL7QVJjE", "era": "최신"},
+        {"title": "Psycho - Red Velvet", "url": "https://www.youtube.com/watch?v=VhL7S7xMei8", "era": "최신"},
+        {"title": "Stay - The Kid LAROI, Justin Bieber", "url": "https://www.youtube.com/watch?v=kTJczUoc26U", "era": "최신"},
+        {"title": "good 4 u - Olivia Rodrigo", "url": "https://www.youtube.com/watch?v=gNi_6U5Pm_o", "era": "최신"},
+    ],
+    "J-POP": [
+        {"title": "夜に駆ける - YOASOBI", "url": "https://www.youtube.com/watch?v=x8VYWazR5mE", "era": "최신"},
+        {"title": "Lemon - Kenshi Yonezu", "url": "https://www.youtube.com/watch?v=SX_ViT4Ra7k", "era": "명곡"},
+        {"title": "Gurenge - LiSA", "url": "https://www.youtube.com/watch?v=CwkzK-F0Y00", "era": "최신"},
+        {"title": "Marigold - Aimyon", "url": "https://www.youtube.com/watch?v=4fSs6B3Ie-s", "era": "최신"},
+        {"title": "Pretender - Official HIGE DANdism", "url": "https://www.youtube.com/watch?v=TQ8WlA2GXbk", "era": "최신"},
+        {"title": "Paprika - Foorin", "url": "https://www.youtube.com/watch?v=7lI8FeF0Py8", "era": "최신"},
+        {"title": "Plastic Love - Mariya Takeuchi", "url": "https://www.youtube.com/watch?v=1v61yy5Vb_c", "era": "명곡"},
+    ],
+    "클래식/재즈": [
+        {"title": "Beethoven - Moonlight Sonata", "url": "https://www.youtube.com/watch?v=GRxofEmo3HA", "era": "명곡"},
+        {"title": "Chopin - Nocturne Op.9 No.2", "url": "https://www.youtube.com/watch?v=r4hMZBGIqDc", "era": "명곡"},
+        {"title": "Bill Evans - Peace Piece", "url": "https://www.youtube.com/watch?v=HMnrl0tmd3k", "era": "명곡"},
+        {"title": "John Coltrane - A Love Supreme", "url": "https://www.youtube.com/watch?v=vmDDOFXSgAs", "era": "명곡"},
+        {"title": "Vivaldi - Four Seasons (Spring)", "url": "https://www.youtube.com/watch?v=1w7OgIMMRc4", "era": "명곡"},
+        {"title": "Debussy - Clair de Lune", "url": "https://www.youtube.com/watch?v=9E6b3swbnWg", "era": "명곡"},
+        {"title": "Miles Davis - So What", "url": "https://www.youtube.com/watch?v=b2JXswA6PuY", "era": "명곡"},
+    ],
+    "감성 발라드": [
+        {"title": "Adele - Someone Like You", "url": "https://www.youtube.com/watch?v=hLQl3WQQoQ0", "era": "최신"},
+        {"title": "Sam Smith - Stay With Me", "url": "https://www.youtube.com/watch?v=pB-5XG-DbAA", "era": "최신"},
+        {"title": "John Legend - All of Me", "url": "https://www.youtube.com/watch?v=450p7goxZqg", "era": "명곡"},
+        {"title": "Michael Bublé - Home", "url": "https://www.youtube.com/watch?v=Ho32Oh6b4jc", "era": "명곡"},
+        {"title": "James Arthur - Say You Won't Let Go", "url": "https://www.youtube.com/watch?v=0yW7w8F2TVA", "era": "최신"},
+    ],
+}
+
+# ----------------- MBTI -> 기본 음악 스타일 매핑 -----------------
+mbti_style_map = {
+    "INTJ": ["클래식/재즈", "정돈된 테마 음악"],
+    "INFP": ["감성 발라드", "애니메이션 곡"],
+    "ENFP": ["팝송", "신나는 팝"],
+    "ENTP": ["다양성 있는 셔플 믹스", "EDM"],
+    "ISFJ": ["클래식/재즈", "OST"],
+    "ISTP": ["EDM", "몽환적 사운드"],
+    "INFJ": ["몽환적 사운드", "감성 발라드"],
+    "ESFJ": ["OST", "감성 발라드"],
+    "ISTJ": ["재즈", "클래식/재즈"],
+    "ESTP": ["레트로팝", "EDM"],
+    "ENFJ": ["가사 중심 감성곡", "팝송"],
+    "ESFP": ["드림팝", "팝송"],
+    "ISFP": ["Lofi", "애니메이션 곡"],
+    "INTP": ["정돈된 테마 음악", "클래식/재즈"],
+    "ESTJ": ["신나는 팝", "팝송"],
+    "ENTJ": ["EDM", "신나는 팝"],
+}
+
+# ----------------- 시간대 정의 -----------------
+def get_time_of_day(hour):
+    if 5 <= hour < 11:
+        return "아침"
+    elif 11 <= hour < 16:
+        return "점심"
+    elif 16 <= hour < 21:
+        return "저녁"
+    else:
+        return "밤"
+
+# ----------------- 국가별 추천 곡수 -----------------
+country_song_count = {
+    "대한민국": 5,
+    "일본": 5,
+    "미국": 6,
+    "영국": 6,
+    "기타": 4
+}
+
+# ----------------- 나이대별 선호 스타일 추가 -----------------
+age_style_map = {
+    "10대": ["팝송", "K-POP", "애니메이션 곡"],
+    "20대": ["K-POP", "팝송", "EDM"],
+    "30대": ["감성 발라드", "옛날 명곡", "클래식/재즈"],
+    "40대 이상": ["옛날 명곡", "클래식/재즈", "재즈"]
+}
+
+# ----------------- 날씨 / 기분 / 계절에 따른 보정 -----------------
+weather_mood_season_map = {
+    "맑음": ["팝송", "신나는 팝"],
+    "흐림": ["몽환적 사운드", "감성 발라드"],
+    "비": ["감성 발라드", "재즈"],
+    "눈": ["클래식/재즈"],
+    "행복": ["신나는 팝", "다양성 있는 셔플 믹스"],
+    "우울": ["감성 발라드", "애니메이션 곡"],
+    "설렘": ["드림팝", "팝송"],
+    "집중": ["클래식/재즈", "정돈된 테마 음악"],
+    "봄": ["OST", "팝송"],
+    "여름": ["레트로팝", "EDM"],
+    "가을": ["재즈", "감성 발라드"],
+    "겨울": ["클래식/재즈", "감성 발라드"],
+}
+
+# ----------------- 추천 함수 -----------------
+def recommend_music(mbti, weather, mood, season, time_of_day, country, age, user_style_pref):
+    # 기본 스타일
+    base_styles = mbti_style_map.get(mbti.upper(), ["팝송"])
+
+    # 나이대 스타일 추가
+    age_styles = age_style_map.get(age, [])
+
+    # 날씨/기분/계절 스타일 추가
+    extra
