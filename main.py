@@ -61,10 +61,6 @@ country_song_count = {
     "영국": 3,
     "기타": 3
 }
-
-# 음악 링크 딕셔너리는 canvas 코드에서 이미 완성됨!
-from music_links import music_links  # 또는 music_links 직접 복사해 붙여넣기
-
 # ------------------ 추천 함수 ------------------
 def recommend_music(mbti, weather, mood, season, time_of_day, country):
     base_style = style_mapping.get(mbti.upper(), "다양성 있는 셔플 믹스")
