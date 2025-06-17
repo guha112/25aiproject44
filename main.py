@@ -67,6 +67,8 @@ country_song_count = {
 }
 # ------------------ 추천 함수 ------------------
 def recommend_music(mbti, weather, mood, season, time_of_day, country):
+    print(f"DEBUG: country={country}, mbti={mbti}, weather={weather}, mood={mood}, season={season}, time_of_day={time_of_day}")
+    
     base_style = style_mapping.get(mbti.upper(), "다양성 있는 셔플 믹스")
     style_candidates = [base_style]
 
@@ -92,6 +94,9 @@ weather = st.selectbox("오늘의 날씨는 어떤가요?", ["맑음", "흐림",
 mood = st.selectbox("지금 기분은 어떤가요?", ["행복", "우울", "설렘", "집중"])
 season = st.selectbox("현재 계절은?", ["봄", "여름", "가을", "겨울"])
 country = st.selectbox("당신이 위치한 국가는 어디인가요?", ["대한민국", "일본", "미국", "영국", "기타"])
+country = st.selectbox("당신이 위치한 국가는 어디인가요?", ["대한민국", "일본", "미국", "영국", "기타"])
+st.write(f"선택된 국가: {country}")  # 디버깅용 출력
+
 
 # 시간대 자동 감지
 time_now = datetime.now().hour
